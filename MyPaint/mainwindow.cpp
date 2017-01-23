@@ -91,6 +91,5 @@ void MainWindow::on_pushButton_3_clicked()
     pixmap = pixmap.transformed(rm);
     pixmap.scaled(w,h,Qt::KeepAspectRatio);
     label->setPixmap(pixmap);
-    scrollArea->baseSize();
 
 }
