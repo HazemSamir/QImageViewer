@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     lineEdit = ui->lineEdit;
 
     /*load the default img (white img)*/
-    show_img(":/img_resources/Imgs/default.jpg");
+    show_img(":/img_resources/Imgs/samir.jpg");
 
 }
 
