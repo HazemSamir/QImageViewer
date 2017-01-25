@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/Images_list">
+        <file>Images/samir</file>
+        <file>Images/default</file>
+    </qresource>
+</RCC>
