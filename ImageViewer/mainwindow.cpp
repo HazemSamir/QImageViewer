@@ -55,6 +55,8 @@ void MainWindow::on_pushButton_clicked()
                 tr("JPEG (*.jpg *.jpeg);;PNG (*.png);;BMP (*.bmp)" )
                 );
     display(imagePath);
+    ui->horizontalSlider->setValue(0);
+
 }
 
 /*save*/
@@ -99,4 +101,13 @@ void MainWindow::on_horizontalSlider_valueChanged(int value)
 void MainWindow::on_spinBox_valueChanged(int value)
 {
     rotate(value);
+}
+
+/*reset*/
+void MainWindow::on_pushButton_5_clicked()
+{
+    display(":/Images_list/Images/default");
+    rotate(0);
+    ui->horizontalSlider->setValue(0);
+
 }
