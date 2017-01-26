@@ -19,19 +19,19 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_pushButton_clicked();
+    void on_openBtn_clicked();
 
-    void on_pushButton_2_clicked();
+    void on_saveBtn_clicked();
 
-    void on_pushButton_3_clicked();
+    void on_zoomBtn_clicked();
 
-    void on_pushButton_4_clicked();
+    void on_cropBtn_clicked();
 
-    void on_horizontalSlider_valueChanged(int value);
+    void on_resetBtn_clicked();
 
-    void on_spinBox_valueChanged(int arg1);
+    void on_angleHSlider_valueChanged(int value);
 
-    void on_pushButton_5_clicked();
+    void on_angleSpinBox_valueChanged(int value);
 
 private:
     Ui::MainWindow *ui;

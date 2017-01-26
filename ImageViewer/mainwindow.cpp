@@ -36,8 +36,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     gv = ui->graphicsView;
     display(":/Images_list/Images/default");
-    connect(ui->horizontalSlider , SIGNAL(valueChanged(int)) , ui->spinBox , SLOT(setValue(int)));
-    connect(ui->spinBox , SIGNAL(valueChanged(int)) , ui->horizontalSlider , SLOT(setValue(int)));
+    connect(ui->angleHSlider , SIGNAL(valueChanged(int)) , ui->angleSpinBox , SLOT(setValue(int)));
+    connect(ui->angleSpinBox , SIGNAL(valueChanged(int)) , ui->angleHSlider , SLOT(setValue(int)));
 }
 
 MainWindow::~MainWindow()
@@ -46,7 +46,7 @@ MainWindow::~MainWindow()
 }
 
 /*open*/
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_openBtn_clicked()
 {
     QString imagePath = QFileDialog::getOpenFileName(
                 this,
@@ -55,16 +55,15 @@ void MainWindow::on_pushButton_clicked()
                 tr("JPEG (*.jpg *.jpeg);;PNG (*.png);;BMP (*.bmp)" )
                 );
     display(imagePath);
-    ui->horizontalSlider->setValue(0);
-
+    ui->angleHSlider->setValue(0);
 }
 
 /*save*/
-void MainWindow::on_pushButton_2_clicked()
+void MainWindow::on_saveBtn_clicked()
 {
     QString imagePath = QFileDialog::getSaveFileName(
                     this,
-                    tr("Save File"),
+                    tr("Save Image"),
                     "",
                     tr("JPEG (*.jpg *.jpeg);;PNG (*.png);;BMP (*.bmp)" )
                     );
@@ -72,42 +71,45 @@ void MainWindow::on_pushButton_2_clicked()
     *imageObject = image.toImage();
 
     /*Save Image*/
-    QFile file( imagePath);
-    file.open( QIODevice::WriteOnly );
-    imageObject->save(&file,"PNG");
+    QMatrix rm;
+    int angle = ui->angleHSlider->value();
+    rm.rotate(angle);
+    QImage newImage = imageObject->transformed(rm, Qt::SmoothTransformation);
+    // pixmap.scaled(w, h, Qt::KeepAspectRatio);
+    QFile file(imagePath);
+    file.open(QIODevice::WriteOnly);
+    newImage.save(&file, "PNG");
     file.close();
-
 }
 
 /*zoom*/
-void MainWindow::on_pushButton_3_clicked()
+void MainWindow::on_zoomBtn_clicked()
 {
 
 }
 
 /*crop*/
-void MainWindow::on_pushButton_4_clicked()
+void MainWindow::on_cropBtn_clicked()
 {
 
 }
 
 /*slider*/
-void MainWindow::on_horizontalSlider_valueChanged(int value)
+void MainWindow::on_angleHSlider_valueChanged(int value)
 {
     rotate(value);
 }
 
-/*spinBOX*/
-void MainWindow::on_spinBox_valueChanged(int value)
+/*angleSpinBox*/
+void MainWindow::on_angleSpinBox_valueChanged(int value)
 {
     rotate(value);
 }
 
 /*reset*/
-void MainWindow::on_pushButton_5_clicked()
+void MainWindow::on_resetBtn_clicked()
 {
     display(":/Images_list/Images/default");
     rotate(0);
-    ui->horizontalSlider->setValue(0);
-
+    ui->angleHSlider->setValue(0);
 }

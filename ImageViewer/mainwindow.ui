@@ -7,11 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>707</width>
-    <height>330</height>
+    <height>338</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
+  </property>
+  <property name="statusTip">
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -20,42 +23,42 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="openBtn">
           <property name="text">
            <string>open</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_2">
+         <widget class="QPushButton" name="saveBtn">
           <property name="text">
            <string>save</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_3">
+         <widget class="QPushButton" name="zoomBtn">
           <property name="text">
            <string>zoom</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_4">
+         <widget class="QPushButton" name="cropBtn">
           <property name="text">
            <string>crop</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_5">
+         <widget class="QPushButton" name="resetBtn">
           <property name="text">
            <string>reset</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSlider" name="horizontalSlider">
+         <widget class="QSlider" name="angleHSlider">
           <property name="minimum">
            <number>-360</number>
           </property>
@@ -68,7 +71,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBox">
+         <widget class="QSpinBox" name="angleSpinBox">
           <property name="minimum">
            <number>-360</number>
           </property>
@@ -92,7 +95,7 @@
      <x>0</x>
      <y>0</y>
      <width>707</width>
-     <height>18</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>
