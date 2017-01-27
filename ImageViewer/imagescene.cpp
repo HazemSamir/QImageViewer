@@ -49,14 +49,16 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
 void ImageScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     QGraphicsView* mView = views().at(0);
     if (sceneMode == Mode::ZoomIn) {
-        if(mView)
+        if(mView && rect && rect->rect().width() && rect->rect().height())
             mView->fitInView(rect, Qt::KeepAspectRatio);
     } else if (sceneMode == Mode::Crop) {
-        image->crop(rect->rect());
-        updatePixmap();
+        if (rect && rect->rect().width() && rect->rect().height()) {
+            image->crop(rect->rect());
+            updatePixmap();
+            if (angleSlider)
+                angleSlider->setValue(0);
+        }
         setMode(Mode::ZoomIn);
-        if (angleSlider)
-            angleSlider->setValue(0);
     }
 
     removeItem(rect);
