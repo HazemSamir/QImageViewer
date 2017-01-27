@@ -3,4 +3,15 @@
         <file>Images/samir</file>
         <file>Images/default</file>
     </qresource>
+    <qresource prefix="/cursors">
+        <file>cursors/zoomin.png</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file>icons/zoomout.png</file>
+        <file>icons/crop.png</file>
+        <file>icons/open.png</file>
+        <file>icons/save.png</file>
+        <file>icons/reset.png</file>
+        <file>icons/ImageViewer.png</file>
+    </qresource>
 </RCC>

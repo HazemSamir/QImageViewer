@@ -103,10 +103,12 @@ void MainWindow::display(QString path){
     this->setWindowTitle("Image Viewer::" + path);
     reset();
     gv->setScene(scene);
+    scene->setMode(ImageScene::ZoomIn);
 }
 
 void MainWindow::reset() {
     scene->setImage(image);
+    scene->setMode(ImageScene::ZoomIn);
     ui->angleHSlider->setValue(0);
     gv->resetMatrix();
 }

@@ -9,6 +9,14 @@ ImageScene::ImageScene(QObject* parent): QGraphicsScene(parent)
 
 void ImageScene::setMode(Mode mode){
     sceneMode = mode;
+    if (views().empty())
+        return;
+    QGraphicsView* mView = views().at(0);
+    if (mode == Mode::ZoomIn) {
+        mView->viewport()->setCursor(QCursor(QPixmap(":/cursors/cursors/zoomin.png")));
+    } else if (mode == Mode::Crop){
+        mView->viewport()->setCursor(Qt::CrossCursor);
+    }
 }
 
 void ImageScene::mousePressEvent(QGraphicsSceneMouseEvent *event){

@@ -21,6 +21,7 @@ public:
     void setMode(Mode mode);
     void setImage(Image *image);
 
+    /// TODO: make it private
     QSlider *angleSlider;
 
 protected:
@@ -33,9 +34,8 @@ private:
     Mode sceneMode;
     QPointF origPoint;
     QGraphicsRectItem* rect;
-    
-    Image *image;
 
+    Image *image;
     QGraphicsPixmapItem *pixmapItem;
 
     void updatePixmap();
