@@ -22,6 +22,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->angleHSlider , SIGNAL(valueChanged(int)) , ui->angleSpinBox , SLOT(setValue(int)));
     connect(ui->angleSpinBox , SIGNAL(valueChanged(int)) , ui->angleHSlider , SLOT(setValue(int)));
     
+    resize(QGuiApplication::primaryScreen()->availableSize() * 4 / 5);
+
     /* for debugging */
     display(":/Images_list/Images/default");
 }
@@ -43,7 +45,7 @@ void MainWindow::on_openBtn_clicked()
                 this,
                 tr("Open File"),
                 "",
-                tr("JPEG (*.jpg *.jpeg);;PNG (*.png);;BMP (*.bmp)")
+                tr("Image (*.jpg *.jpeg *.png *.bmp)")
                 );
     if (imagePath.size() == 0)
         return;
@@ -58,7 +60,7 @@ void MainWindow::on_saveBtn_clicked()
                     this,
                     tr("Save Image"),
                     "",
-                    tr("PNG (*.png);;JPEG (*.jpeg)"));
+                    tr("PNG (*.png);;JPEG (*.jpeg);;BMP (*.bmp)"));
     if (imagePath.size() == 0)
         return;
     /* Save Image */
@@ -103,6 +105,8 @@ void MainWindow::on_resetBtn_clicked()
                                         QMessageBox::Yes|QMessageBox::No);
         if(reply == QMessageBox::Yes)
             display(image->imagePath());
+    } else {
+        reset();
     }
 }
 
