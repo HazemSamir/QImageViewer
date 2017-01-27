@@ -1,9 +1,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "imagescene.h"
+#include "image.h"
+
 #include <QMainWindow>
-#include <QGraphicsItem>
-#include <QGraphicsScene>
 #include <QtGui>
 
 namespace Ui {
@@ -23,7 +24,7 @@ private slots:
 
     void on_saveBtn_clicked();
 
-    void on_zoomBtn_clicked();
+    void on_zoomOutBtn_clicked();
 
     void on_cropBtn_clicked();
 
@@ -34,13 +35,15 @@ private slots:
     void on_angleSpinBox_valueChanged(int value);
 
 private:
-    Ui::MainWindow *ui;
-    QGraphicsPixmapItem *item;
-    QPixmap image;
-    QGraphicsScene *scene;
-    QImage  *imageObject;
+    Ui::MainWindow *ui = 0;
+    ImageScene *scene = 0;
+    QGraphicsView *gv = 0;
+    
+    Image *image = 0;
+    
     void display(QString str);
     void rotate(int value);
+    void reset();
 };
 
 #endif // MAINWINDOW_H

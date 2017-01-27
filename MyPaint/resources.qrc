@@ -1,6 +1,0 @@
-<RCC>
-    <qresource prefix="/img_resources">
-        <file>Imgs/default.jpg</file>
-        <file>Imgs/samir.jpg</file>
-    </qresource>
-</RCC>

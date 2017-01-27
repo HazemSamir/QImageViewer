@@ -9,35 +9,21 @@
 #include <QTransform>
 #include <QtGui>
 
-QGraphicsView *gv;
-int rotation_angle = 0;
-
-void MainWindow::rotate(int value){
-    int delta = value - rotation_angle;
-    rotation_angle = value;
-    gv->rotate(delta);
-}
-
-void MainWindow::display(QString str){
-    imageObject = new QImage();
-    imageObject->load(str);
-    image = QPixmap::fromImage(*imageObject);
-
-    scene = new QGraphicsScene(this);
-    scene->addPixmap(image);
-    scene->setSceneRect(image.rect());
-    gv->setScene(scene);
-}
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     gv = ui->graphicsView;
-    display(":/Images_list/Images/default");
+    scene = new ImageScene(this);
+    scene->angleSlider = ui->angleHSlider;
+    scene->setMode(ImageScene::ZoomIn);
+    
     connect(ui->angleHSlider , SIGNAL(valueChanged(int)) , ui->angleSpinBox , SLOT(setValue(int)));
     connect(ui->angleSpinBox , SIGNAL(valueChanged(int)) , ui->angleHSlider , SLOT(setValue(int)));
+    
+    /* for debugging */
+    display(":/Images_list/Images/default");
 }
 
 MainWindow::~MainWindow()
@@ -45,17 +31,17 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-/*open*/
+/* open */
 void MainWindow::on_openBtn_clicked()
 {
+    on_resetBtn_clicked();
     QString imagePath = QFileDialog::getOpenFileName(
                 this,
                 tr("Open File"),
                 "",
-                tr("JPEG (*.jpg *.jpeg);;PNG (*.png);;BMP (*.bmp)" )
+                tr("JPEG (*.jpg *.jpeg);;PNG (*.png);;BMP (*.bmp)")
                 );
     display(imagePath);
-    ui->angleHSlider->setValue(0);
 }
 
 /*save*/
@@ -65,51 +51,62 @@ void MainWindow::on_saveBtn_clicked()
                     this,
                     tr("Save Image"),
                     "",
-                    tr("JPEG (*.jpg *.jpeg);;PNG (*.png);;BMP (*.bmp)" )
-                    );
+                    tr("PNG (*.png);;JPEG (*.jpeg)"));
 
-    *imageObject = image.toImage();
-
-    /*Save Image*/
-    QMatrix rm;
-    int angle = ui->angleHSlider->value();
-    rm.rotate(angle);
-    QImage newImage = imageObject->transformed(rm, Qt::SmoothTransformation);
-    // pixmap.scaled(w, h, Qt::KeepAspectRatio);
+    /* Save Image */
     QFile file(imagePath);
+    qDebug() << ">>>>>>>>>" << imagePath << "\n";
     file.open(QIODevice::WriteOnly);
-    newImage.save(&file, "PNG");
+    image->currentQImage()->save(&file);
     file.close();
 }
 
-/*zoom*/
-void MainWindow::on_zoomBtn_clicked()
+/* zoom out */
+void MainWindow::on_zoomOutBtn_clicked()
 {
-
+    gv->scale(0.5, 0.5);
 }
 
-/*crop*/
+/* crop */
 void MainWindow::on_cropBtn_clicked()
 {
-
+    scene->setMode(ImageScene::Crop);
 }
 
-/*slider*/
+/* slider */
 void MainWindow::on_angleHSlider_valueChanged(int value)
 {
     rotate(value);
 }
 
-/*angleSpinBox*/
+/* angleSpinBox */
 void MainWindow::on_angleSpinBox_valueChanged(int value)
 {
     rotate(value);
 }
 
-/*reset*/
+/* reset */
 void MainWindow::on_resetBtn_clicked()
 {
-    display(":/Images_list/Images/default");
-    rotate(0);
+    display(image->imagePath());
+}
+
+void MainWindow::rotate(int value){
+    image->rotate(value);
+    scene->setImage(image);
+}
+
+void MainWindow::display(QString path){
+    if (!image)
+      delete image;
+    image = new Image(path);
+    this->setWindowTitle("Image Viewer::" + path);
+    reset();
+    gv->setScene(scene);
+}
+
+void MainWindow::reset() {
+    scene->setImage(image);
     ui->angleHSlider->setValue(0);
+    gv->resetMatrix();
 }
