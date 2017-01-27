@@ -15,6 +15,8 @@ public:
     int angle() { return rotation; }
     void propagate_rotation();
 
+    bool changed() { return isRotated || isCropped; }
+
     QImage crop(QRectF rect);
     
     QImage *currentQImage();
@@ -25,6 +27,8 @@ private:
     int rotation = 0;
     int lazy_rotation = 0;
     bool lazy_rotated = false;
+    bool isRotated = false;
+    bool isCropped = false;
 };
 
 #endif // IMAGE_H

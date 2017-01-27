@@ -22,7 +22,8 @@ int Image::rotate(int angle) {
     QMatrix rm;
     rm.rotate(angle);
     rotatedImage = image.transformed(rm, Qt::SmoothTransformation);
-    
+    if (rotation != 0)
+        isRotated = true;
     return delta;
 }
 
@@ -42,6 +43,7 @@ void Image::propagate_rotation() {
 
 QImage Image::crop(QRectF rect) {
     propagate_rotation();
+    isCropped = true;
     rotatedImage = image = rotatedImage.copy(rect.x(), rect.y(), rect.width(), rect.height());
     rotation = 0;
     lazy_rotation = 0;

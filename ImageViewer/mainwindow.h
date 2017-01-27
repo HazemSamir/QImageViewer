@@ -19,6 +19,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+protected:
+    void closeEvent(QCloseEvent *event);
+
 private slots:
     void on_openBtn_clicked();
 
@@ -40,7 +43,8 @@ private:
     QGraphicsView *gv = 0;
     
     Image *image = 0;
-    
+
+    void save_changes();
     void display(QString str);
     void rotate(int value);
     void reset();

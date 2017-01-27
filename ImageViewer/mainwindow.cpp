@@ -31,16 +31,23 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::closeEvent(QCloseEvent *event) {
+    save_changes();
+}
+
 /* open */
 void MainWindow::on_openBtn_clicked()
 {
-    on_resetBtn_clicked();
+    save_changes();
     QString imagePath = QFileDialog::getOpenFileName(
                 this,
                 tr("Open File"),
                 "",
                 tr("JPEG (*.jpg *.jpeg);;PNG (*.png);;BMP (*.bmp)")
                 );
+    if (imagePath.size() == 0)
+        return;
+    reset();
     display(imagePath);
 }
 
@@ -52,13 +59,15 @@ void MainWindow::on_saveBtn_clicked()
                     tr("Save Image"),
                     "",
                     tr("PNG (*.png);;JPEG (*.jpeg)"));
-
+    if (imagePath.size() == 0)
+        return;
     /* Save Image */
     QFile file(imagePath);
-    qDebug() << ">>>>>>>>>" << imagePath << "\n";
     file.open(QIODevice::WriteOnly);
     image->currentQImage()->save(&file);
     file.close();
+
+    display(imagePath);
 }
 
 /* zoom out */
@@ -88,7 +97,13 @@ void MainWindow::on_angleSpinBox_valueChanged(int value)
 /* reset */
 void MainWindow::on_resetBtn_clicked()
 {
-    display(image->imagePath());
+    if(image->changed()) {
+        QMessageBox::StandardButton reply = QMessageBox::question(
+                    this, "Warning", "Changes will be lost, are you sure you want to reset?",
+                                        QMessageBox::Yes|QMessageBox::No);
+        if(reply == QMessageBox::Yes)
+            display(image->imagePath());
+    }
 }
 
 void MainWindow::rotate(int value){
@@ -111,4 +126,14 @@ void MainWindow::reset() {
     scene->setMode(ImageScene::ZoomIn);
     ui->angleHSlider->setValue(0);
     gv->resetMatrix();
+}
+
+void MainWindow::save_changes() {
+    if(image->changed()) {
+        QMessageBox::StandardButton reply = QMessageBox::question(
+                    this, "Save Changes", "Do you want to save changes?",
+                                        QMessageBox::Yes|QMessageBox::No);
+        if(reply == QMessageBox::Yes)
+            on_saveBtn_clicked();
+    }
 }
