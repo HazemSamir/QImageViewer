@@ -19,6 +19,9 @@ MainWindow::MainWindow(QWidget* parent)
     scene->angleSlider = ui->angleHSlider;
     scene->setMode(ImageScene::NoMode);
 
+    ui->rotationWidget->hide();
+    connect(ui->actionRotate, SIGNAL(toggled(bool)), ui->rotationWidget, SLOT(setVisible(bool)));
+
     connect(ui->angleHSlider, SIGNAL(valueChanged(int)), ui->angleSpinBox, SLOT(setValue(int)));
     connect(ui->angleSpinBox, SIGNAL(valueChanged(int)), ui->angleHSlider, SLOT(setValue(int)));
 
@@ -127,6 +130,16 @@ void MainWindow::on_actionHandTool_triggered(bool checked)
     ui->actionZoomInArea->setChecked(false);
     ui->actionCrop->setChecked(false);
     Q_UNUSED(checked);
+}
+
+void MainWindow::keyPressEvent(QKeyEvent* event)
+{
+    qDebug("here");
+    if (event->key() == Qt::Key_Escape) {
+        qDebug("here");
+        on_actionHandTool_triggered(true);
+        ui->actionRotate->setChecked(false);
+    }
 }
 
 /* slider */
