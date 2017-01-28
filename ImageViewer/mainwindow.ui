@@ -29,7 +29,17 @@
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>rotate</string>
+           <string>rotation angle:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="angleSpinBox">
+          <property name="minimum">
+           <number>-180</number>
+          </property>
+          <property name="maximum">
+           <number>180</number>
           </property>
          </widget>
         </item>
@@ -43,16 +53,6 @@
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="angleSpinBox">
-          <property name="minimum">
-           <number>-180</number>
-          </property>
-          <property name="maximum">
-           <number>180</number>
           </property>
          </widget>
         </item>

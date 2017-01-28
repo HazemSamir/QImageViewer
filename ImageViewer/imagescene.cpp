@@ -43,7 +43,7 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
         if(!rect){
             rect = new QGraphicsRectItem;
             this->addItem(rect);
-            rect->setPen(QPen(Qt::black, 1, Qt::SolidLine));
+            rect->setPen(QPen(Qt::black, 1.0 / currentScaleValue(), Qt::SolidLine));
             rect->setRect(QRectF(origPoint, QSizeF(0, 0)));
         }
         QPointF topLeft(origPoint);
@@ -122,6 +122,14 @@ void ImageScene::updatePixmap() {
     QPixmap pixmap = QPixmap::fromImage(*image->currentQImage());
     pixmapItem = addPixmap(pixmap);
     setSceneRect(pixmap.rect());
+}
+
+double ImageScene::currentScaleValue()
+{
+    QGraphicsView* mView = getGraphicsView();
+    if (!mView)
+        return 1.0;
+    return mView->transform().m11();
 }
 
 QGraphicsView *ImageScene::getGraphicsView()

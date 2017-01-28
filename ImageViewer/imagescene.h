@@ -43,6 +43,7 @@ private:
 
     void updatePixmap();
     void removeSelectionRectangle();
+    double currentScaleValue();
     QGraphicsView *getGraphicsView();
 };
 
