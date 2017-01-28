@@ -21,10 +21,9 @@ int Image::rotate(int angle)
 {
     if (!isLoaded)
         return 0;
+    propagate_rotation();
     int delta = angle - rotation;
-
     rotation = angle;
-    lazy_rotation = angle;
 
     QMatrix rm;
     rm.rotate(angle);
@@ -39,6 +38,8 @@ int Image::lazy_rotate(int angle)
 {
     if (!isLoaded)
         return 0;
+    if(!lazy_rotated)
+        lazy_rotation = rotation;
     int delta = angle - lazy_rotation;
     lazy_rotation = angle;
     lazy_rotated = true;
@@ -49,8 +50,9 @@ int Image::lazy_rotate(int angle)
 void Image::propagate_rotation()
 {
     if (lazy_rotated) {
-        rotate(lazy_rotation);
         lazy_rotated = false;
+        rotate(lazy_rotation);
+        lazy_rotation = 0;
     }
 }
 

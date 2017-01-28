@@ -47,6 +47,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
 /* open */
 void MainWindow::on_actionOpen_triggered()
 {
+    propagate_lazy_rotate();
     scene->setMode(ImageScene::NoMode);
     save_changes();
     QString imagePath = QFileDialog::getOpenFileName(
@@ -65,6 +66,7 @@ void MainWindow::on_actionSave_triggered()
 {
     if (!image || !image->loaded())
         return;
+    propagate_lazy_rotate();
     scene->setMode(ImageScene::NoMode);
     QString imagePath = QFileDialog::getSaveFileName(
         this,
@@ -85,6 +87,7 @@ void MainWindow::on_actionSave_triggered()
 /* zoom in */
 void MainWindow::on_actionZoomIn_triggered()
 {
+    propagate_lazy_rotate();
     scene->setMode(ImageScene::NoMode);
     gv->scale(scene->zoomInFactor, scene->zoomInFactor);
 }
@@ -92,6 +95,7 @@ void MainWindow::on_actionZoomIn_triggered()
 /* zoom out */
 void MainWindow::on_actionZoomOut_triggered()
 {
+    propagate_lazy_rotate();
     scene->setMode(ImageScene::NoMode);
     gv->scale(scene->zoomOutFactor, scene->zoomOutFactor);
 }
@@ -99,6 +103,9 @@ void MainWindow::on_actionZoomOut_triggered()
 /* zoom in area */
 void MainWindow::on_actionZoomInArea_triggered(bool checked)
 {
+    propagate_lazy_rotate();
+    gv->rotate(-image->lazy_angle());
+    scene->setImage(image);
     if (checked) {
         scene->setMode(ImageScene::ZoomIn);
         ui->actionHandTool->setChecked(false);
@@ -113,6 +120,7 @@ void MainWindow::on_actionZoomInArea_triggered(bool checked)
 /* crop */
 void MainWindow::on_actionCrop_triggered(bool checked)
 {
+    propagate_lazy_rotate();
     if (checked) {
         scene->setMode(ImageScene::Crop);
         ui->actionHandTool->setChecked(false);
@@ -127,6 +135,7 @@ void MainWindow::on_actionCrop_triggered(bool checked)
 /* hand tool */
 void MainWindow::on_actionHandTool_triggered(bool checked)
 {
+    propagate_lazy_rotate();
     scene->setMode(ImageScene::NoMode);
     ui->actionHandTool->setChecked(true);
     ui->actionZoomInArea->setChecked(false);
@@ -136,22 +145,11 @@ void MainWindow::on_actionHandTool_triggered(bool checked)
 
 void MainWindow::keyPressEvent(QKeyEvent* event)
 {
+    propagate_lazy_rotate();
     if (event->key() == Qt::Key_Escape) {
         on_actionHandTool_triggered(true);
         ui->actionRotate->setChecked(false);
     }
-}
-
-/* slider */
-void MainWindow::on_angleHSlider_valueChanged(int value)
-{
-    rotate(value);
-}
-
-/* angleSpinBox */
-void MainWindow::on_angleSpinBox_valueChanged(int value)
-{
-    rotate(value);
 }
 
 /* reset */
@@ -159,6 +157,7 @@ void MainWindow::on_actionReset_triggered()
 {
     if (!image || !image->loaded())
         return;
+    propagate_lazy_rotate();
     if (image->changed()) {
         QMessageBox::StandardButton reply = QMessageBox::question(
             this, "Warning", "Changes will be lost, are you sure you want to reset?",
@@ -170,18 +169,42 @@ void MainWindow::on_actionReset_triggered()
     }
 }
 
-void MainWindow::rotate(int value)
+/* slider */
+void MainWindow::on_angleHSlider_valueChanged(int value)
+{
+    lazy_rotate(value);
+}
+
+/* angleSpinBox */
+void MainWindow::on_angleSpinBox_valueChanged(int value)
+{
+    lazy_rotate(value);
+}
+
+/*----------- utils functions -------- */
+
+void MainWindow::lazy_rotate(int value)
 {
     if (!image || !image->loaded())
         return;
-    image->rotate(value);
-    scene->setImage(image);
+    int delta = image->lazy_rotate(value);
+    gv_lazy_rotation += delta;
+    gv->rotate(delta);
+}
+
+void MainWindow::propagate_lazy_rotate()
+{
+    gv->rotate(-gv_lazy_rotation);
+    gv_lazy_rotation = 0;
+    if (image)
+        scene->setImage(image);
 }
 
 void MainWindow::display(QString path)
 {
     if (!image)
         delete image;
+    propagate_lazy_rotate();
     image = new Image(path);
     if (!image || !image->loaded())
         return;
@@ -192,6 +215,7 @@ void MainWindow::display(QString path)
 
 void MainWindow::reset()
 {
+    propagate_lazy_rotate();
     ui->angleHSlider->setValue(0);
     gv->resetMatrix();
     if (!image || !image->loaded())
@@ -204,6 +228,7 @@ void MainWindow::save_changes()
 {
     if (!image || !image->loaded())
         return;
+    propagate_lazy_rotate();
     if (image->changed()) {
         QMessageBox::StandardButton reply = QMessageBox::question(
             this, "Save Changes", "Do you want to save changes?",

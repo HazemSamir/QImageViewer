@@ -49,11 +49,12 @@ private:
     Ui::MainWindow* ui = 0;
     ImageScene* scene = 0;
     QGraphicsView* gv = 0;
+    int gv_lazy_rotation = 0;
 
     Image* image = 0;
-
     void save_changes();
-    void rotate(int value);
+    void lazy_rotate(int value);
+    void propagate_lazy_rotate();
     void reset();
 };
 

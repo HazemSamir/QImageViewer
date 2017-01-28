@@ -11,10 +11,10 @@ public:
 
     int rotate(int angle);
     int lazy_rotate(int angle);
-    int angle() { return rotation; }
-    void propagate_rotation();
+    int angle() { propagate_rotation(); return rotation; }
+    int lazy_angle() { return lazy_rotation; }
 
-    bool changed() { return isRotated || isCropped; }
+    bool changed() { propagate_rotation(); return isRotated || isCropped; }
     bool loaded() { return isLoaded; }
 
     QImage crop(QRectF rect);
@@ -30,6 +30,8 @@ private:
     bool isRotated = false;
     bool isCropped = false;
     bool isLoaded = false;
+
+    void propagate_rotation();
 };
 
 #endif // IMAGE_H
