@@ -25,7 +25,9 @@ MainWindow::MainWindow(QWidget* parent)
     resize(QGuiApplication::primaryScreen()->availableSize() * 4 / 5);
 
     /* for debugging */
+    #ifdef QT_DEBUG
     display(":/Images_list/Images/default");
+    #endif
 }
 
 MainWindow::~MainWindow()

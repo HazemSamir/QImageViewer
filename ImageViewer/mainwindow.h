@@ -16,6 +16,7 @@ class MainWindow : public QMainWindow {
 
 public:
     explicit MainWindow(QWidget* parent = 0);
+    void display(QString str);
     ~MainWindow();
 
 protected:
@@ -47,7 +48,6 @@ private:
     Image* image = 0;
 
     void save_changes();
-    void display(QString str);
     void rotate(int value);
     void reset();
 };
