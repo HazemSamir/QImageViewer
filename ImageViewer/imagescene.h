@@ -22,6 +22,7 @@ public:
     ImageScene(QObject* parent = 0);
 
     void setMode(Mode mode);
+    Mode mode() { return sceneMode; }
     void setImage(Image* image);
 
     /// TODO: make it private

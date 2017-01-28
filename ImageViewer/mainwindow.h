@@ -36,9 +36,13 @@ private slots:
 
     void on_actionZoomOut_triggered();
 
-    void on_actionCrop_triggered();
+    void on_actionCrop_triggered(bool checked);
 
     void on_actionReset_triggered();
+
+    void on_actionHandTool_triggered(bool checked);
+
+    void on_actionZoomInArea_triggered(bool checked);
 
 private:
     Ui::MainWindow* ui = 0;

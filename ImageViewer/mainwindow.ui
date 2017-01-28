@@ -56,6 +56,19 @@
           </property>
          </widget>
         </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
        </layout>
       </item>
       <item>
@@ -100,9 +113,11 @@
    <addaction name="actionOpen"/>
    <addaction name="actionSave"/>
    <addaction name="separator"/>
+   <addaction name="actionZoomInArea"/>
    <addaction name="actionZoomIn"/>
    <addaction name="actionZoomOut"/>
    <addaction name="actionCrop"/>
+   <addaction name="actionHandTool"/>
    <addaction name="separator"/>
    <addaction name="actionReset"/>
   </widget>
@@ -138,20 +153,23 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="actionZoomIn">
+  <action name="actionZoomInArea">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="sources.qrc">
      <normaloff>:/icons/icons/zoomin_area.png</normaloff>
      <normalon>:/icons/icons/zoomin.png</normalon>:/icons/icons/zoomin_area.png</iconset>
    </property>
    <property name="text">
-    <string>zoomIn</string>
+    <string>zoom in area</string>
    </property>
    <property name="toolTip">
-    <string>select area to zoom in (O)</string>
+    <string>select area to zoom in (Z)</string>
    </property>
    <property name="shortcut">
-    <string>O</string>
+    <string>Z</string>
    </property>
   </action>
   <action name="actionZoomOut">
@@ -171,6 +189,9 @@
    </property>
   </action>
   <action name="actionCrop">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset>
      <normalon>:/icons/icons/crop.png</normalon>
@@ -196,7 +217,43 @@
     <string>Reset</string>
    </property>
    <property name="toolTip">
-    <string>restore orignal image</string>
+    <string>restore orignal image (Ctrl+R)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionHandTool">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="sources.qrc">
+     <normaloff>:/icons/icons/handtool.png</normaloff>:/icons/icons/handtool.png</iconset>
+   </property>
+   <property name="text">
+    <string>hand tool</string>
+   </property>
+   <property name="toolTip">
+    <string>hand tool (Esc, H)</string>
+   </property>
+   <property name="shortcut">
+    <string>H</string>
+   </property>
+  </action>
+  <action name="actionZoomIn">
+   <property name="icon">
+    <iconset resource="sources.qrc">
+     <normaloff>:/icons/icons/zoomin.png</normaloff>:/icons/icons/zoomin.png</iconset>
+   </property>
+   <property name="text">
+    <string>ZoomIn</string>
+   </property>
+   <property name="toolTip">
+    <string>Zoom in (+)</string>
    </property>
   </action>
  </widget>

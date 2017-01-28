@@ -85,8 +85,9 @@ void ImageScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             if (angleSlider)
                 angleSlider->setValue(0);
         }
+    } else if (sceneMode == Mode::MovingMode) {
+        setMode(Mode::NoMode);
     }
-    setMode(Mode::NoMode);
     removeSelectionRectangle();
     QGraphicsScene::mouseReleaseEvent(event);
 }

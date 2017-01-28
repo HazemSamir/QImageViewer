@@ -79,7 +79,8 @@ void MainWindow::on_actionSave_triggered()
 /* zoom in */
 void MainWindow::on_actionZoomIn_triggered()
 {
-    scene->setMode(ImageScene::ZoomIn);
+    scene->setMode(ImageScene::NoMode);
+    gv->scale(scene->zoomInFactor, scene->zoomInFactor);
 }
 
 /* zoom out */
@@ -89,10 +90,41 @@ void MainWindow::on_actionZoomOut_triggered()
     gv->scale(scene->zoomOutFactor, scene->zoomOutFactor);
 }
 
-/* crop */
-void MainWindow::on_actionCrop_triggered()
+/* zoom in area */
+void MainWindow::on_actionZoomInArea_triggered(bool checked)
 {
-    scene->setMode(ImageScene::Crop);
+    if (checked) {
+        scene->setMode(ImageScene::ZoomIn);
+        ui->actionHandTool->setChecked(false);
+        ui->actionCrop->setChecked(false);
+    } else {
+        scene->setMode(ImageScene::NoMode);
+        ui->actionHandTool->setChecked(true);
+        ui->actionCrop->setChecked(false);
+    }
+}
+
+/* crop */
+void MainWindow::on_actionCrop_triggered(bool checked)
+{
+    if (checked) {
+        scene->setMode(ImageScene::Crop);
+        ui->actionHandTool->setChecked(false);
+        ui->actionZoomInArea->setChecked(false);
+    } else {
+        scene->setMode(ImageScene::NoMode);
+        ui->actionHandTool->setChecked(true);
+        ui->actionZoomInArea->setChecked(false);
+    }
+}
+
+/* hand tool */
+void MainWindow::on_actionHandTool_triggered(bool checked)
+{
+    scene->setMode(ImageScene::NoMode);
+    ui->actionHandTool->setChecked(true);
+    ui->actionZoomInArea->setChecked(false);
+    ui->actionCrop->setChecked(false);
 }
 
 /* slider */
