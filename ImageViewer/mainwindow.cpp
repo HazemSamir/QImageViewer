@@ -63,6 +63,8 @@ void MainWindow::on_actionOpen_triggered()
 /* save */
 void MainWindow::on_actionSave_triggered()
 {
+    if (!image || !image->loaded())
+        return;
     scene->setMode(ImageScene::NoMode);
     QString imagePath = QFileDialog::getSaveFileName(
         this,
@@ -157,6 +159,8 @@ void MainWindow::on_angleSpinBox_valueChanged(int value)
 /* reset */
 void MainWindow::on_actionReset_triggered()
 {
+    if (!image || !image->loaded())
+        return;
     if (image->changed()) {
         QMessageBox::StandardButton reply = QMessageBox::question(
             this, "Warning", "Changes will be lost, are you sure you want to reset?",
@@ -170,6 +174,8 @@ void MainWindow::on_actionReset_triggered()
 
 void MainWindow::rotate(int value)
 {
+    if (!image || !image->loaded())
+        return;
     image->rotate(value);
     scene->setImage(image);
 }
@@ -179,6 +185,8 @@ void MainWindow::display(QString path)
     if (!image)
         delete image;
     image = new Image(path);
+    if (!image || !image->loaded())
+        return;
     this->setWindowTitle("Image Viewer::" + path);
     reset();
     gv->setScene(scene);
@@ -186,14 +194,18 @@ void MainWindow::display(QString path)
 
 void MainWindow::reset()
 {
-    scene->setImage(image);
-    scene->setMode(ImageScene::NoMode);
     ui->angleHSlider->setValue(0);
     gv->resetMatrix();
+    if (!image || !image->loaded())
+        return;
+    scene->setImage(image);
+    scene->setMode(ImageScene::NoMode);
 }
 
 void MainWindow::save_changes()
 {
+    if (!image || !image->loaded())
+        return;
     if (image->changed()) {
         QMessageBox::StandardButton reply = QMessageBox::question(
             this, "Save Changes", "Do you want to save changes?",

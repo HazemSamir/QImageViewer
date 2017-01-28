@@ -15,6 +15,7 @@ public:
     void propagate_rotation();
 
     bool changed() { return isRotated || isCropped; }
+    bool loaded() { return isLoaded; }
 
     QImage crop(QRectF rect);
 
@@ -28,6 +29,7 @@ private:
     bool lazy_rotated = false;
     bool isRotated = false;
     bool isCropped = false;
+    bool isLoaded = false;
 };
 
 #endif // IMAGE_H

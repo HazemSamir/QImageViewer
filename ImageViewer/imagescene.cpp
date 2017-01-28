@@ -39,6 +39,8 @@ void ImageScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
 void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
+    if (!image || !image->loaded())
+        return;
     if (sceneMode == Mode::NoMode)
         return;
     if (sceneMode == Mode::MovingMode) {
@@ -72,6 +74,8 @@ void ImageScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     QGraphicsView* mView = getGraphicsView();
     if (!mView)
         return;
+    if (!image || !image->loaded())
+        return;
     if (sceneMode == Mode::ZoomIn && mView && rect) {
         int rectArea = rect->rect().width() * rect->rect().height();
         if (rectArea > 2)
@@ -94,6 +98,8 @@ void ImageScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
 void ImageScene::wheelEvent(QGraphicsSceneWheelEvent* event)
 {
+    if (!image || !image->loaded())
+        return;
     event->ignore();
     QGraphicsView* mView = getGraphicsView();
     if (!mView)
@@ -122,7 +128,7 @@ void ImageScene::setImage(Image* image)
 
 void ImageScene::updatePixmap()
 {
-    if (!image)
+    if (!image || !image->loaded())
         return;
 
     if (pixmapItem) {
