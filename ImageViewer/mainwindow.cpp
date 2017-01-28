@@ -38,6 +38,7 @@ MainWindow::~MainWindow()
 void MainWindow::closeEvent(QCloseEvent* event)
 {
     save_changes();
+    Q_UNUSED(event);
 }
 
 /* open */
@@ -125,6 +126,7 @@ void MainWindow::on_actionHandTool_triggered(bool checked)
     ui->actionHandTool->setChecked(true);
     ui->actionZoomInArea->setChecked(false);
     ui->actionCrop->setChecked(false);
+    Q_UNUSED(checked);
 }
 
 /* slider */
