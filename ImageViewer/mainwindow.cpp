@@ -40,6 +40,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 /* open */
 void MainWindow::on_actionOpen_triggered()
 {
+    scene->setMode(ImageScene::NoMode);
     save_changes();
     QString imagePath = QFileDialog::getOpenFileName(
                 this,
@@ -56,6 +57,7 @@ void MainWindow::on_actionOpen_triggered()
 /* save */
 void MainWindow::on_actionSave_triggered()
 {
+    scene->setMode(ImageScene::NoMode);
     QString imagePath = QFileDialog::getSaveFileName(
                     this,
                     tr("Save Image"),
@@ -81,7 +83,8 @@ void MainWindow::on_actionZoomIn_triggered()
 /* zoom out */
 void MainWindow::on_actionZoomOut_triggered()
 {
-    gv->scale(0.5, 0.5);
+    scene->setMode(ImageScene::NoMode);
+    gv->scale(scene->zoomOutFactor, scene->zoomOutFactor);
 }
 
 /* crop */
@@ -130,13 +133,12 @@ void MainWindow::display(QString path)
     this->setWindowTitle("Image Viewer::" + path);
     reset();
     gv->setScene(scene);
-    scene->setMode(ImageScene::ZoomIn);
 }
 
 void MainWindow::reset()
 {
     scene->setImage(image);
-    scene->setMode(ImageScene::ZoomIn);
+    scene->setMode(ImageScene::NoMode);
     ui->angleHSlider->setValue(0);
     gv->resetMatrix();
 }

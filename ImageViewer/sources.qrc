@@ -4,11 +4,11 @@
         <file>Images/default</file>
     </qresource>
     <qresource prefix="/cursors">
-        <file>cursors/zoomin.png</file>
+        <file>cursors/zoomin_area.png</file>
     </qresource>
     <qresource prefix="/icons">
         <file>icons/zoomout.png</file>
-        <file>icons/zoomin.png</file>
+        <file>icons/zoomin_area.png</file>
         <file>icons/crop.png</file>
         <file>icons/open.png</file>
         <file>icons/save.png</file>

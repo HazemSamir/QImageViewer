@@ -14,7 +14,9 @@
 class ImageScene : public  QGraphicsScene
 {
 public:
-    enum Mode {NoMode, ZoomIn, Crop};
+    enum Mode {NoMode, MovingMode, ZoomIn, Crop};
+    double zoomOutFactor = 0.375;
+    double zoomInFactor = 1.375;
 
     ImageScene(QObject* parent = 0);
     
@@ -29,7 +31,8 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
-    
+    void wheelEvent(QGraphicsSceneWheelEvent *event);
+
 private:
     Mode sceneMode;
     QPointF origPoint;
@@ -39,6 +42,7 @@ private:
     QGraphicsPixmapItem *pixmapItem;
 
     void updatePixmap();
+    QGraphicsView *getGraphicsView();
 };
 
 
