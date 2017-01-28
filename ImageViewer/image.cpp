@@ -8,17 +8,19 @@ Image::Image(QString path)
     this->path = path;
 }
 
-QImage *Image::currentQImage() {
+QImage* Image::currentQImage()
+{
     propagate_rotation();
     return &rotatedImage;
 }
 
-int Image::rotate(int angle) {
+int Image::rotate(int angle)
+{
     int delta = angle - rotation;
 
     rotation = angle;
     lazy_rotation = angle;
-    
+
     QMatrix rm;
     rm.rotate(angle);
     rotatedImage = image.transformed(rm, Qt::SmoothTransformation);
@@ -27,23 +29,29 @@ int Image::rotate(int angle) {
     return delta;
 }
 
-int Image::lazy_rotate(int angle) {
+/* record the angle without applying rotation */
+int Image::lazy_rotate(int angle)
+{
     int delta = angle - lazy_rotation;
     lazy_rotation = angle;
     lazy_rotated = true;
     return delta;
 }
 
-void Image::propagate_rotation() {
+/* perform any recorded rotations if any */
+void Image::propagate_rotation()
+{
     if (lazy_rotated) {
         rotate(lazy_rotation);
         lazy_rotated = false;
     }
 }
 
-QImage Image::crop(QRectF rect) {
+QImage Image::crop(QRectF rect)
+{
     propagate_rotation();
     isCropped = true;
+    /// TODO: Handle if the crop rectangle out side the image rect
     rotatedImage = image = rotatedImage.copy(rect.x(), rect.y(), rect.width(), rect.height());
     rotation = 0;
     lazy_rotation = 0;

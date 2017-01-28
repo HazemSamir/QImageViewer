@@ -3,8 +3,7 @@
 
 #include <QImage>
 
-class Image
-{
+class Image {
 public:
     Image(QString path);
 
@@ -18,8 +17,8 @@ public:
     bool changed() { return isRotated || isCropped; }
 
     QImage crop(QRectF rect);
-    
-    QImage *currentQImage();
+
+    QImage* currentQImage();
 
 private:
     QString path;

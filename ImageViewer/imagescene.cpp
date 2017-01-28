@@ -1,20 +1,22 @@
 #include "imagescene.h"
 
-ImageScene::ImageScene(QObject* parent): QGraphicsScene(parent)
+ImageScene::ImageScene(QObject* parent)
+    : QGraphicsScene(parent)
 {
     sceneMode = NoMode;
     rect = 0;
     pixmapItem = 0;
 }
 
-void ImageScene::setMode(Mode mode){
+void ImageScene::setMode(Mode mode)
+{
     sceneMode = mode;
     QGraphicsView* mView = getGraphicsView();
     if (!mView)
         return;
     if (mode == Mode::ZoomIn) {
         mView->viewport()->setCursor(QCursor(QPixmap(":/cursors/cursors/zoomin_area.png")));
-    } else if (mode == Mode::Crop){
+    } else if (mode == Mode::Crop) {
         mView->viewport()->setCursor(Qt::CrossCursor);
     } else if (mode == Mode::NoMode) {
         mView->viewport()->setCursor(Qt::OpenHandCursor);
@@ -26,7 +28,8 @@ void ImageScene::setMode(Mode mode){
     }
 }
 
-void ImageScene::mousePressEvent(QGraphicsSceneMouseEvent *event){
+void ImageScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
+{
     origPoint = event->scenePos();
     if (sceneMode == Mode::NoMode) {
         setMode(Mode::MovingMode);
@@ -34,13 +37,14 @@ void ImageScene::mousePressEvent(QGraphicsSceneMouseEvent *event){
     QGraphicsScene::mousePressEvent(event);
 }
 
-void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
+void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+{
     if (sceneMode == Mode::NoMode)
         return;
     if (sceneMode == Mode::MovingMode) {
         return;
     } else {
-        if(!rect){
+        if (!rect) {
             rect = new QGraphicsRectItem;
             this->addItem(rect);
             rect->setPen(QPen(Qt::black, 1.0 / currentScaleValue(), Qt::SolidLine));
@@ -48,6 +52,7 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
         }
         QPointF topLeft(origPoint);
         QPointF bottomRight(event->scenePos());
+        /* handle if the current point is not to the bottom left of the origpoint by swaping */
         if (topLeft.x() > bottomRight.x()) {
             int temp = topLeft.x();
             topLeft.setX(bottomRight.x());
@@ -62,19 +67,21 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
     }
 }
 
-void ImageScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
+void ImageScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+{
     QGraphicsView* mView = getGraphicsView();
     if (!mView)
         return;
     if (sceneMode == Mode::ZoomIn && mView && rect) {
         int rectArea = rect->rect().width() * rect->rect().height();
-        if(rectArea > 2)
+        if (rectArea > 2)
             mView->fitInView(rect, Qt::KeepAspectRatio);
     } else if (sceneMode == Mode::Crop && rect) {
         int rectArea = rect->rect().width() * rect->rect().height();
-        if(rectArea >= 1) {
+        if (rectArea >= 1) {
             image->crop(rect->rect());
             updatePixmap();
+            /// TODO: BAD Practice
             if (angleSlider)
                 angleSlider->setValue(0);
         }
@@ -84,7 +91,7 @@ void ImageScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     QGraphicsScene::mouseReleaseEvent(event);
 }
 
-void ImageScene::wheelEvent(QGraphicsSceneWheelEvent *event)
+void ImageScene::wheelEvent(QGraphicsSceneWheelEvent* event)
 {
     event->ignore();
     QGraphicsView* mView = getGraphicsView();
@@ -93,30 +100,33 @@ void ImageScene::wheelEvent(QGraphicsSceneWheelEvent *event)
     if (event->modifiers().testFlag(Qt::ControlModifier)) {
         if (event->delta() > 0) {
             mView->scale(zoomInFactor, zoomInFactor);
-        } else if(event->delta() < 0) {
+        } else if (event->delta() < 0) {
             mView->scale(zoomOutFactor, zoomOutFactor);
         }
         event->accept();
     }
 }
 
-void ImageScene::keyPressEvent(QKeyEvent *event){
-    if(event->key() == Qt::Key_Escape)
+void ImageScene::keyPressEvent(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_Escape)
         setMode(Mode::NoMode);
 }
 
-void ImageScene::setImage(Image *image) {
+void ImageScene::setImage(Image* image)
+{
     this->image = image;
     updatePixmap();
 }
 
-void ImageScene::updatePixmap() {
+void ImageScene::updatePixmap()
+{
     if (!image)
         return;
 
-    if(pixmapItem) {
-      removeItem(pixmapItem);
-      delete pixmapItem;
+    if (pixmapItem) {
+        removeItem(pixmapItem);
+        delete pixmapItem;
     }
 
     QPixmap pixmap = QPixmap::fromImage(*image->currentQImage());
@@ -132,7 +142,7 @@ double ImageScene::currentScaleValue()
     return mView->transform().m11();
 }
 
-QGraphicsView *ImageScene::getGraphicsView()
+QGraphicsView* ImageScene::getGraphicsView()
 {
     if (views().empty())
         return 0;
