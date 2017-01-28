@@ -2,3 +2,5 @@
 *.exe
 *.apk
 build-*
+*.user
+*.user.*

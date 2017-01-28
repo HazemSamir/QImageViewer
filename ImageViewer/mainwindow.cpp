@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     gv = ui->graphicsView;
     scene = new ImageScene(this);
     scene->angleSlider = ui->angleHSlider;
-    scene->setMode(ImageScene::ZoomIn);
+    scene->setMode(ImageScene::NoMode);
     
     connect(ui->angleHSlider , SIGNAL(valueChanged(int)) , ui->angleSpinBox , SLOT(setValue(int)));
     connect(ui->angleSpinBox , SIGNAL(valueChanged(int)) , ui->angleHSlider , SLOT(setValue(int)));
@@ -38,7 +38,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 }
 
 /* open */
-void MainWindow::on_openBtn_clicked()
+void MainWindow::on_actionOpen_triggered()
 {
     save_changes();
     QString imagePath = QFileDialog::getOpenFileName(
@@ -53,8 +53,8 @@ void MainWindow::on_openBtn_clicked()
     display(imagePath);
 }
 
-/*save*/
-void MainWindow::on_saveBtn_clicked()
+/* save */
+void MainWindow::on_actionSave_triggered()
 {
     QString imagePath = QFileDialog::getSaveFileName(
                     this,
@@ -72,14 +72,20 @@ void MainWindow::on_saveBtn_clicked()
     display(imagePath);
 }
 
+/* zoom in */
+void MainWindow::on_actionZoomIn_triggered()
+{
+    scene->setMode(ImageScene::ZoomIn);
+}
+
 /* zoom out */
-void MainWindow::on_zoomOutBtn_clicked()
+void MainWindow::on_actionZoomOut_triggered()
 {
     gv->scale(0.5, 0.5);
 }
 
 /* crop */
-void MainWindow::on_cropBtn_clicked()
+void MainWindow::on_actionCrop_triggered()
 {
     scene->setMode(ImageScene::Crop);
 }
@@ -97,7 +103,7 @@ void MainWindow::on_angleSpinBox_valueChanged(int value)
 }
 
 /* reset */
-void MainWindow::on_resetBtn_clicked()
+void MainWindow::on_actionReset_triggered()
 {
     if(image->changed()) {
         QMessageBox::StandardButton reply = QMessageBox::question(
@@ -110,12 +116,14 @@ void MainWindow::on_resetBtn_clicked()
     }
 }
 
-void MainWindow::rotate(int value){
+void MainWindow::rotate(int value)
+{
     image->rotate(value);
     scene->setImage(image);
 }
 
-void MainWindow::display(QString path){
+void MainWindow::display(QString path)
+{
     if (!image)
       delete image;
     image = new Image(path);
@@ -125,19 +133,21 @@ void MainWindow::display(QString path){
     scene->setMode(ImageScene::ZoomIn);
 }
 
-void MainWindow::reset() {
+void MainWindow::reset()
+{
     scene->setImage(image);
     scene->setMode(ImageScene::ZoomIn);
     ui->angleHSlider->setValue(0);
     gv->resetMatrix();
 }
 
-void MainWindow::save_changes() {
+void MainWindow::save_changes()
+{
     if(image->changed()) {
         QMessageBox::StandardButton reply = QMessageBox::question(
                     this, "Save Changes", "Do you want to save changes?",
                                         QMessageBox::Yes|QMessageBox::No);
         if(reply == QMessageBox::Yes)
-            on_saveBtn_clicked();
+            on_actionSave_triggered();
     }
 }

@@ -23,19 +23,22 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 private slots:
-    void on_openBtn_clicked();
-
-    void on_saveBtn_clicked();
-
-    void on_zoomOutBtn_clicked();
-
-    void on_cropBtn_clicked();
-
-    void on_resetBtn_clicked();
 
     void on_angleHSlider_valueChanged(int value);
 
     void on_angleSpinBox_valueChanged(int value);
+
+    void on_actionOpen_triggered();
+
+    void on_actionSave_triggered();
+
+    void on_actionZoomIn_triggered();
+
+    void on_actionZoomOut_triggered();
+
+    void on_actionCrop_triggered();
+
+    void on_actionReset_triggered();
 
 private:
     Ui::MainWindow *ui = 0;
