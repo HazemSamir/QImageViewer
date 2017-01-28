@@ -18,8 +18,11 @@ void ImageScene::setMode(Mode mode){
         mView->viewport()->setCursor(Qt::CrossCursor);
     } else if (mode == Mode::NoMode) {
         mView->viewport()->setCursor(Qt::OpenHandCursor);
+        mView->setDragMode(QGraphicsView::NoDrag);
+        removeSelectionRectangle();
     } else if (mode == Mode::MovingMode) {
         mView->viewport()->setCursor(Qt::ClosedHandCursor);
+        mView->setDragMode(QGraphicsView::ScrollHandDrag);
     }
 }
 
@@ -63,11 +66,13 @@ void ImageScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     QGraphicsView* mView = getGraphicsView();
     if (!mView)
         return;
-    if (sceneMode == Mode::ZoomIn) {
-        if(mView && rect && rect->rect().width() && rect->rect().height())
+    if (sceneMode == Mode::ZoomIn && mView && rect) {
+        int rectArea = rect->rect().width() * rect->rect().height();
+        if(rectArea > 2)
             mView->fitInView(rect, Qt::KeepAspectRatio);
-    } else if (sceneMode == Mode::Crop) {
-        if (rect && rect->rect().width() && rect->rect().height()) {
+    } else if (sceneMode == Mode::Crop && rect) {
+        int rectArea = rect->rect().width() * rect->rect().height();
+        if(rectArea >= 1) {
             image->crop(rect->rect());
             updatePixmap();
             if (angleSlider)
@@ -75,11 +80,7 @@ void ImageScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         }
     }
     setMode(Mode::NoMode);
-    if (rect) {
-        removeItem(rect);
-        delete rect;
-        rect = 0;
-    }
+    removeSelectionRectangle();
     QGraphicsScene::mouseReleaseEvent(event);
 }
 
@@ -100,13 +101,8 @@ void ImageScene::wheelEvent(QGraphicsSceneWheelEvent *event)
 }
 
 void ImageScene::keyPressEvent(QKeyEvent *event){
-    if(event->key() == Qt::Key_Delete)
-        foreach(QGraphicsItem* item, selectedItems()){
-            removeItem(item);
-            delete item;
-        }
-    else
-        QGraphicsScene::keyPressEvent(event);
+    if(event->key() == Qt::Key_Escape)
+        setMode(Mode::NoMode);
 }
 
 void ImageScene::setImage(Image *image) {
@@ -133,4 +129,13 @@ QGraphicsView *ImageScene::getGraphicsView()
     if (views().empty())
         return 0;
     return views().at(0);
+}
+
+void ImageScene::removeSelectionRectangle()
+{
+    if (rect) {
+        removeItem(rect);
+        delete rect;
+        rect = 0;
+    }
 }

@@ -42,6 +42,7 @@ private:
     QGraphicsPixmapItem *pixmapItem;
 
     void updatePixmap();
+    void removeSelectionRectangle();
     QGraphicsView *getGraphicsView();
 };
 
