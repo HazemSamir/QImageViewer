@@ -136,9 +136,7 @@ void MainWindow::on_actionHandTool_triggered(bool checked)
 
 void MainWindow::keyPressEvent(QKeyEvent* event)
 {
-    qDebug("here");
     if (event->key() == Qt::Key_Escape) {
-        qDebug("here");
         on_actionHandTool_triggered(true);
         ui->actionRotate->setChecked(false);
     }

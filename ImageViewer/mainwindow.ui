@@ -36,6 +36,21 @@
          </item>
          <item>
           <widget class="QSpinBox" name="angleSpinBox">
+           <property name="frame">
+            <bool>false</bool>
+           </property>
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::UpDownArrows</enum>
+           </property>
+           <property name="specialValueText">
+            <string notr="true"/>
+           </property>
+           <property name="suffix">
+            <string notr="true"/>
+           </property>
+           <property name="prefix">
+            <string notr="true"/>
+           </property>
            <property name="minimum">
             <number>-180</number>
            </property>
@@ -115,11 +130,14 @@
    <property name="allowedAreas">
     <set>Qt::NoToolBarArea</set>
    </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
    <property name="floatable">
     <bool>false</bool>
    </property>
    <attribute name="toolBarArea">
-    <enum>LeftToolBarArea</enum>
+    <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
     <bool>false</bool>
