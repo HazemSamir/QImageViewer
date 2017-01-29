@@ -51,11 +51,20 @@ private slots:
 
     void on_scene_modeChanged(int);
 
+    void on_actionZoomFactor_triggered(bool checked);
+
+    void on_factorSpinBox_valueChanged(double arg1);
+
+    void on_zoomSlider_valueChanged(int value);
+
+    void zoomWithFactor(double factor);
+
 private:
     Ui::MainWindow* ui = 0;
     ImageScene* scene = 0;
     QGraphicsView* gv = 0;
     int gv_lazy_rotation = 0;
+    double zoomFactor = 1;
 
     Image* image = 0;
     void save_changes();
