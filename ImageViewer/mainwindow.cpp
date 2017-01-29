@@ -16,7 +16,6 @@ MainWindow::MainWindow(QWidget* parent)
     ui->setupUi(this);
     gv = ui->graphicsView;
     scene = new ImageScene(this);
-    scene->angleSlider = ui->angleHSlider;
     scene->setMode(ImageScene::NoMode);
 
     #ifdef Q_OS_ANDROID
@@ -31,6 +30,8 @@ MainWindow::MainWindow(QWidget* parent)
 
     connect(ui->angleHSlider, SIGNAL(valueChanged(int)), ui->angleSpinBox, SLOT(setValue(int)));
     connect(ui->angleSpinBox, SIGNAL(valueChanged(int)), ui->angleHSlider, SLOT(setValue(int)));
+
+    connect(scene, SIGNAL(modeChanged(int)), this, SLOT(on_scene_modeChanged(int)));
 
     resize(QGuiApplication::primaryScreen()->availableSize() * 4 / 5);
 
@@ -51,10 +52,21 @@ void MainWindow::closeEvent(QCloseEvent* event)
     Q_UNUSED(event);
 }
 
+void MainWindow::on_toolBar_actionTriggered(QAction* a) {
+    propagate_lazy_rotate();
+    Q_UNUSED(a);
+}
+
+void MainWindow::on_actionRotate_triggered(bool checked)
+{
+    scene->setMode(ImageScene::NoMode);
+    ui->actionRotate->setChecked(checked);
+    propagate_lazy_rotate();
+}
+
 /* open */
 void MainWindow::on_actionOpen_triggered()
 {
-    propagate_lazy_rotate();
     scene->setMode(ImageScene::NoMode);
     save_changes();
     QString imagePath = QFileDialog::getOpenFileName(
@@ -73,7 +85,6 @@ void MainWindow::on_actionSave_triggered()
 {
     if (!image || !image->loaded())
         return;
-    propagate_lazy_rotate();
     scene->setMode(ImageScene::NoMode);
     QString imagePath = QFileDialog::getSaveFileName(
         this,
@@ -94,7 +105,6 @@ void MainWindow::on_actionSave_triggered()
 /* zoom in */
 void MainWindow::on_actionZoomIn_triggered()
 {
-    propagate_lazy_rotate();
     scene->setMode(ImageScene::NoMode);
     gv->scale(scene->zoomInFactor, scene->zoomInFactor);
 }
@@ -102,61 +112,56 @@ void MainWindow::on_actionZoomIn_triggered()
 /* zoom out */
 void MainWindow::on_actionZoomOut_triggered()
 {
-    propagate_lazy_rotate();
     scene->setMode(ImageScene::NoMode);
     gv->scale(scene->zoomOutFactor, scene->zoomOutFactor);
+}
+
+void MainWindow::on_scene_modeChanged(int mode)
+{
+    ui->actionHandTool->setChecked(false);
+    ui->actionZoomInArea->setChecked(false);
+    ui->actionCrop->setChecked(false);
+    ui->actionRotate->setChecked(false);
+    ui->angleHSlider->setValue(image->angle());
+
+    if (mode == ImageScene::Crop) {
+        ui->actionCrop->setChecked(true);
+    } else if (mode == ImageScene::ZoomIn) {
+        ui->actionZoomInArea->setChecked(true);
+    } else {
+        ui->actionHandTool->setChecked(true);
+    }
 }
 
 /* zoom in area */
 void MainWindow::on_actionZoomInArea_triggered(bool checked)
 {
-    propagate_lazy_rotate();
-    gv->rotate(-image->lazy_angle());
-    scene->setImage(image);
-    if (checked) {
+    if (checked)
         scene->setMode(ImageScene::ZoomIn);
-        ui->actionHandTool->setChecked(false);
-        ui->actionCrop->setChecked(false);
-    } else {
+    else
         scene->setMode(ImageScene::NoMode);
-        ui->actionHandTool->setChecked(true);
-        ui->actionCrop->setChecked(false);
-    }
 }
 
 /* crop */
 void MainWindow::on_actionCrop_triggered(bool checked)
 {
-    propagate_lazy_rotate();
-    if (checked) {
+    if (checked)
         scene->setMode(ImageScene::Crop);
-        ui->actionHandTool->setChecked(false);
-        ui->actionZoomInArea->setChecked(false);
-    } else {
+    else
         scene->setMode(ImageScene::NoMode);
-        ui->actionHandTool->setChecked(true);
-        ui->actionZoomInArea->setChecked(false);
-    }
 }
 
 /* hand tool */
 void MainWindow::on_actionHandTool_triggered(bool checked)
 {
-    propagate_lazy_rotate();
     scene->setMode(ImageScene::NoMode);
-    ui->actionHandTool->setChecked(true);
-    ui->actionZoomInArea->setChecked(false);
-    ui->actionCrop->setChecked(false);
     Q_UNUSED(checked);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent* event)
 {
-    propagate_lazy_rotate();
-    if (event->key() == Qt::Key_Escape) {
-        on_actionHandTool_triggered(true);
-        ui->actionRotate->setChecked(false);
-    }
+    if (event->key() == Qt::Key_Escape)
+        scene->setMode(ImageScene::NoMode);
 }
 
 /* reset */
@@ -164,7 +169,6 @@ void MainWindow::on_actionReset_triggered()
 {
     if (!image || !image->loaded())
         return;
-    propagate_lazy_rotate();
     if (image->changed()) {
         QMessageBox::StandardButton reply = QMessageBox::question(
             this, "Warning", "Changes will be lost, are you sure you want to reset?",
@@ -203,7 +207,7 @@ void MainWindow::propagate_lazy_rotate()
 {
     gv->rotate(-gv_lazy_rotation);
     gv_lazy_rotation = 0;
-    if (image)
+    if (image && image->loaded())
         scene->setImage(image);
 }
 
@@ -211,7 +215,6 @@ void MainWindow::display(QString path)
 {
     if (!image)
         delete image;
-    propagate_lazy_rotate();
     image = new Image(path);
     if (!image || !image->loaded())
         return;
@@ -222,7 +225,6 @@ void MainWindow::display(QString path)
 
 void MainWindow::reset()
 {
-    propagate_lazy_rotate();
     ui->angleHSlider->setValue(0);
     gv->resetMatrix();
     if (!image || !image->loaded())
@@ -235,7 +237,6 @@ void MainWindow::save_changes()
 {
     if (!image || !image->loaded())
         return;
-    propagate_lazy_rotate();
     if (image->changed()) {
         QMessageBox::StandardButton reply = QMessageBox::question(
             this, "Save Changes", "Do you want to save changes?",

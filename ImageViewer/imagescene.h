@@ -11,6 +11,9 @@
 #include <QSlider>
 
 class ImageScene : public QGraphicsScene {
+
+Q_OBJECT
+
 public:
     enum Mode { NoMode,
         MovingMode,
@@ -25,8 +28,8 @@ public:
     Mode mode() { return sceneMode; }
     void setImage(Image* image);
 
-    /// TODO: make it private
-    QSlider* angleSlider;
+signals:
+    void modeChanged(int);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);

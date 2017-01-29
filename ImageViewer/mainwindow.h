@@ -45,6 +45,12 @@ private slots:
 
     void on_actionZoomInArea_triggered(bool checked);
 
+    void on_toolBar_actionTriggered(QAction*);
+
+    void on_actionRotate_triggered(bool);
+
+    void on_scene_modeChanged(int);
+
 private:
     Ui::MainWindow* ui = 0;
     ImageScene* scene = 0;

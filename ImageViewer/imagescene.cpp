@@ -26,6 +26,7 @@ void ImageScene::setMode(Mode mode)
         mView->viewport()->setCursor(Qt::ClosedHandCursor);
         mView->setDragMode(QGraphicsView::ScrollHandDrag);
     }
+    emit modeChanged(mode);
 }
 
 void ImageScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
@@ -85,14 +86,10 @@ void ImageScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
         if (rectArea >= 1) {
             image->crop(rect->rect());
             updatePixmap();
-            /// TODO: BAD Practice
-            if (angleSlider)
-                angleSlider->setValue(0);
         }
-    } else if (sceneMode == Mode::MovingMode) {
-        setMode(Mode::NoMode);
     }
     removeSelectionRectangle();
+    setMode(Mode::NoMode);
     QGraphicsScene::mouseReleaseEvent(event);
 }
 
