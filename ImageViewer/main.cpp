@@ -1,7 +1,10 @@
 #include "mainwindow.h"
 #include <QApplication>
+
+#ifdef Q_OS_ANDROID
 #include <QtAndroidExtras/QAndroidJniObject>
 #include <QtAndroidExtras/QtAndroid>
+#endif
 
 QString loadAndroidFile();
 

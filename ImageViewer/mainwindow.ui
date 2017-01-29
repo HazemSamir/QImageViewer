@@ -106,7 +106,7 @@
          <cursorShape>OpenHandCursor</cursorShape>
         </property>
         <property name="mouseTracking">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="autoFillBackground">
          <bool>false</bool>
@@ -181,13 +181,16 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionOpen"/>
+   <addaction name="actionSave"/>
+   <addaction name="separator"/>
    <addaction name="actionZoomInArea"/>
    <addaction name="actionZoomIn"/>
    <addaction name="actionZoomOut"/>
+   <addaction name="actionHandTool"/>
    <addaction name="separator"/>
    <addaction name="actionRotate"/>
    <addaction name="actionCrop"/>
-   <addaction name="actionHandTool"/>
    <addaction name="separator"/>
    <addaction name="actionReset"/>
   </widget>
@@ -207,7 +210,25 @@
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
    </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>view</string>
+    </property>
+    <addaction name="actionZoomInArea"/>
+    <addaction name="actionZoomIn"/>
+    <addaction name="actionZoomOut"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>edit</string>
+    </property>
+    <addaction name="actionRotate"/>
+    <addaction name="actionCrop"/>
+    <addaction name="actionReset"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuView"/>
+   <addaction name="menuEdit"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">

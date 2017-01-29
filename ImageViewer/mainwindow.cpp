@@ -19,6 +19,13 @@ MainWindow::MainWindow(QWidget* parent)
     scene->angleSlider = ui->angleHSlider;
     scene->setMode(ImageScene::NoMode);
 
+    #ifdef Q_OS_ANDROID
+    ui->menuBar->removeAction(ui->menuEdit->menuAction());
+    ui->menuBar->removeAction(ui->menuView->menuAction());
+    ui->toolBar->removeAction(ui->actionOpen);
+    ui->toolBar->removeAction(ui->actionSave);
+    #endif
+
     ui->rotationWidget->hide();
     connect(ui->actionRotate, SIGNAL(toggled(bool)), ui->rotationWidget, SLOT(setVisible(bool)));
 
