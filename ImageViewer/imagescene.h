@@ -19,7 +19,7 @@ public:
         MovingMode,
         ZoomIn,
         Crop };
-    double zoomOutFactor = 0.375;
+    double zoomOutFactor = 0.5;
     double zoomInFactor = 1.375;
 
     ImageScene(QObject* parent = 0);

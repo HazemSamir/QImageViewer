@@ -34,8 +34,9 @@ MainWindow::MainWindow(QWidget* parent)
     connect(ui->angleHSlider, SIGNAL(valueChanged(int)), ui->angleSpinBox, SLOT(setValue(int)));
     connect(ui->angleSpinBox, SIGNAL(valueChanged(int)), ui->angleHSlider, SLOT(setValue(int)));
 
-    connect(ui->zoomSlider, SIGNAL(valueChanged(int)), ui->factorSpinBox, SLOT(setValue(int)));
-    connect(ui->factorSpinBox, SIGNAL(valueChanged(int)), ui->zoomSlider, SLOT(setValue(int)));
+    connect(ui->zoomSpinBox, SIGNAL(valueChanged(int)), this, SLOT(absoluteZoom(int)));
+    connect(ui->zoomHSlider, SIGNAL(valueChanged(int)), ui->zoomSpinBox, SLOT(setValue(int)));
+    connect(ui->zoomSpinBox, SIGNAL(valueChanged(int)), ui->zoomHSlider, SLOT(setValue(int)));
 
     connect(scene, SIGNAL(modeChanged(int)), this, SLOT(on_scene_modeChanged(int)));
 
@@ -77,7 +78,6 @@ void MainWindow::on_actionZoomFactor_triggered(bool checked)
 {
     scene->setMode(ImageScene::NoMode);
     ui->actionZoomFactor->setChecked(checked);
-    gv->scale(zoomFactor,zoomFactor);
 }
 
 /* open */
@@ -123,7 +123,6 @@ void MainWindow::on_actionZoomIn_triggered()
 {
     scene->setMode(ImageScene::NoMode);
     gv->scale(scene->zoomInFactor, scene->zoomInFactor);
-    //gv->scale(2,2);
 }
 
 /* zoom out */
@@ -131,16 +130,15 @@ void MainWindow::on_actionZoomOut_triggered()
 {
     scene->setMode(ImageScene::NoMode);
     gv->scale(scene->zoomOutFactor, scene->zoomOutFactor);
-    //gv->scale(0.5,0.5);
 }
 
 void MainWindow::on_scene_modeChanged(int mode)
 {
-    ui->actionHandTool->setChecked(false);
-    ui->actionZoomInArea->setChecked(false);
-    ui->actionCrop->setChecked(false);
-    ui->actionRotate->setChecked(false);
-    ui->angleHSlider->setValue(image->angle());
+    foreach (QAction *action, ui->toolBar->actions()) {
+        action->setChecked(false);
+    }
+    ui->angleSpinBox->setValue(image->angle());
+    ui->zoomSpinBox->setValue(zoomFactorPercentage());
 
     if (mode == ImageScene::Crop) {
         ui->actionCrop->setChecked(true);
@@ -212,18 +210,6 @@ void MainWindow::on_angleSpinBox_valueChanged(int value)
     lazy_rotate(value);
 }
 
-/*zoom slider */
-void MainWindow::on_zoomSlider_valueChanged(int factor)
-{
-    zoomWithFactor(factor);
-}
-
-/* zoom factor SpinBox */
-void MainWindow::on_factorSpinBox_valueChanged(double factor)
-{
-    zoomWithFactor(factor);
-}
-
 
 
 
@@ -282,11 +268,22 @@ void MainWindow::save_changes()
 }
 
 /*zoom with factor*/
-void MainWindow::zoomWithFactor(double factor){
-
-    if(factor != 0){
-        if(factor < 0){factor = -1.0 / factor;}
-        zoomFactor = factor;
-        gv->scale(zoomFactor,zoomFactor);
+void MainWindow::absoluteZoom(double factor){
+    if(factor > 0){
+        factor = factor / zoomFactor();
+        gv->scale(factor, factor);
     }
+}
+
+void MainWindow::absoluteZoom(int factor){
+    absoluteZoom(factor * factor / 10000.0);
+}
+
+int MainWindow::zoomFactorPercentage()
+{
+    return 100 * sqrt(zoomFactor());
+}
+
+double MainWindow::zoomFactor() {
+    return gv->transform().m11();
 }
