@@ -18,12 +18,12 @@ MainWindow::MainWindow(QWidget* parent)
     scene = new ImageScene(this);
     scene->setMode(ImageScene::NoMode);
 
-    #ifdef Q_OS_ANDROID
+#ifdef Q_OS_ANDROID
     ui->menuBar->removeAction(ui->menuEdit->menuAction());
     ui->menuBar->removeAction(ui->menuView->menuAction());
     ui->toolBar->removeAction(ui->actionOpen);
     ui->toolBar->removeAction(ui->actionSave);
-    #endif
+#endif
 
     ui->rotationWidget->hide();
     connect(ui->actionRotate, SIGNAL(toggled(bool)), ui->rotationWidget, SLOT(setVisible(bool)));
@@ -35,15 +35,16 @@ MainWindow::MainWindow(QWidget* parent)
 
     resize(QGuiApplication::primaryScreen()->availableSize() * 4 / 5);
 
-    /* for debugging */
-    #ifdef QT_DEBUG
+/* for debugging */
+#ifdef QT_DEBUG
     display(":/Images_list/Images/default");
-    #endif
+#endif
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete scene;
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -52,7 +53,8 @@ void MainWindow::closeEvent(QCloseEvent* event)
     Q_UNUSED(event);
 }
 
-void MainWindow::on_toolBar_actionTriggered(QAction* a) {
+void MainWindow::on_toolBar_actionTriggered(QAction* a)
+{
     propagate_lazy_rotate();
     Q_UNUSED(a);
 }
@@ -162,6 +164,8 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
 {
     if (event->key() == Qt::Key_Escape)
         scene->setMode(ImageScene::NoMode);
+    else if (event->key() == Qt::Key_Back)
+        qApp->quit();
 }
 
 /* reset */

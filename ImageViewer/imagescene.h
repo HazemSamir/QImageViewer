@@ -23,6 +23,7 @@ public:
     double zoomInFactor = 1.375;
 
     ImageScene(QObject* parent = 0);
+    ~ImageScene();
 
     void setMode(Mode mode);
     Mode mode() { return sceneMode; }

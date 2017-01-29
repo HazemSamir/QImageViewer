@@ -13,18 +13,18 @@ int main(int argc, char* argv[])
     QApplication a(argc, argv);
     MainWindow w;
     w.show();
-    #ifdef Q_OS_ANDROID
+#ifdef Q_OS_ANDROID
     w.display(loadAndroidFile());
-    #else
+#else
     if (argc > 1)
         w.display(argv[1]);
-    #endif
+#endif
     return a.exec();
 }
 
 QString loadAndroidFile()
 {
-    #ifdef Q_OS_ANDROID
+#ifdef Q_OS_ANDROID
     QAndroidJniObject activity = QtAndroid::androidActivity();
     if (activity.isValid()) {
         QAndroidJniObject intent = activity.callObjectMethod("getIntent", "()Landroid/content/Intent;");
@@ -37,6 +37,6 @@ QString loadAndroidFile()
             }
         }
     }
-    #endif
+#endif
     return "";
 }

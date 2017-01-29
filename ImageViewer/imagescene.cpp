@@ -8,6 +8,12 @@ ImageScene::ImageScene(QObject* parent)
     pixmapItem = 0;
 }
 
+ImageScene::~ImageScene()
+{
+    if (pixmapItem)
+        delete pixmapItem;
+}
+
 void ImageScene::setMode(Mode mode)
 {
     sceneMode = mode;

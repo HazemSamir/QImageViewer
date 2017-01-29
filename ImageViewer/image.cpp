@@ -38,7 +38,7 @@ int Image::lazy_rotate(int angle)
 {
     if (!isLoaded)
         return 0;
-    if(!lazy_rotated)
+    if (!lazy_rotated)
         lazy_rotation = rotation;
     int delta = angle - lazy_rotation;
     lazy_rotation = angle;
