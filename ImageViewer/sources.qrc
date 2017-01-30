@@ -16,6 +16,8 @@
         <file>icons/open.png</file>
         <file>icons/save.png</file>
         <file>icons/reset.png</file>
+        <file>icons/redo.png</file>
+        <file>icons/undo.png</file>
         <file>icons/rotate.png</file>
         <file>icons/ImageViewer.png</file>
     </qresource>

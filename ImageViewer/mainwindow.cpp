@@ -8,6 +8,7 @@
 #include <QScrollArea>
 #include <QTransform>
 #include <QtGui>
+#include <iostream>
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
@@ -40,6 +41,11 @@ MainWindow::MainWindow(QWidget* parent)
 
     connect(scene, SIGNAL(modeChanged(int)), this, SLOT(on_scene_modeChanged(int)));
 
+    /* undo and redo connections */
+    connect(ui->zoomSpinBox, SIGNAL(valueChanged(int)), this, SLOT(saveZoomAction(int)));
+    connect(ui->angleSpinBox, SIGNAL(valueChanged(int)), this, SLOT(saveRotateAction(int)));
+    connect(scene, SIGNAL(imageCropped()), this, SLOT(saveCropAction()));
+
     resize(QGuiApplication::primaryScreen()->availableSize() * 4 / 5);
 
 /* for debugging */
@@ -66,13 +72,18 @@ void MainWindow::on_toolBar_actionTriggered(QAction* a)
     Q_UNUSED(a);
 }
 
+void MainWindow::on_menuBar_actionTriggered(QAction* a)
+{
+    propagate_lazy_rotate();
+    Q_UNUSED(a);
+}
+
 void MainWindow::on_actionRotate_triggered(bool checked)
 {
     scene->setMode(ImageScene::NoMode);
     ui->actionRotate->setChecked(checked);
     propagate_lazy_rotate();
 }
-
 
 void MainWindow::on_actionZoomFactor_triggered(bool checked)
 {
@@ -121,20 +132,20 @@ void MainWindow::on_actionSave_triggered()
 /* zoom in */
 void MainWindow::on_actionZoomIn_triggered()
 {
-    scene->setMode(ImageScene::NoMode);
     gv->scale(scene->zoomInFactor, scene->zoomInFactor);
+    scene->setMode(ImageScene::NoMode);
 }
 
 /* zoom out */
 void MainWindow::on_actionZoomOut_triggered()
 {
-    scene->setMode(ImageScene::NoMode);
     gv->scale(scene->zoomOutFactor, scene->zoomOutFactor);
+    scene->setMode(ImageScene::NoMode);
 }
 
 void MainWindow::on_scene_modeChanged(int mode)
 {
-    foreach (QAction *action, ui->toolBar->actions()) {
+    foreach (QAction* action, ui->toolBar->actions()) {
         action->setChecked(false);
     }
     ui->angleSpinBox->setValue(image->angle());
@@ -210,8 +221,27 @@ void MainWindow::on_angleSpinBox_valueChanged(int value)
     lazy_rotate(value);
 }
 
+void MainWindow::on_actionUndo_triggered()
+{
+    if (undoStack.size() > 0) {
+        redoStack.push(undoStack.pop());
+        if(undoStack.size() > 0)
+            doAction(undoStack.top());
+    }
+    ui->actionUndo->setDisabled(undoStack.size() <= 1);
+    ui->actionRedo->setDisabled(redoStack.empty());
+}
 
-
+void MainWindow::on_actionRedo_triggered()
+{
+    if (!redoStack.empty()) {
+        Action* a = redoStack.pop();
+        doAction(a);
+        undoStack.push(a);
+    }
+    ui->actionUndo->setDisabled(undoStack.size() <= 1);
+    ui->actionRedo->setDisabled(redoStack.empty());
+}
 
 /*----------- utils functions -------- */
 
@@ -247,11 +277,17 @@ void MainWindow::display(QString path)
 void MainWindow::reset()
 {
     ui->angleHSlider->setValue(0);
+    ui->zoomSpinBox->setValue(100);
+    ui->actionRedo->setEnabled(false);
+    ui->actionUndo->setEnabled(false);
+    undoStack.clear();
+    redoStack.clear();
     gv->resetMatrix();
     if (!image || !image->loaded())
         return;
     scene->setImage(image);
     scene->setMode(ImageScene::NoMode);
+    saveCropAction();
 }
 
 void MainWindow::save_changes()
@@ -268,15 +304,19 @@ void MainWindow::save_changes()
 }
 
 /*zoom with factor*/
-void MainWindow::absoluteZoom(double factor){
-    if(factor > 0){
+void MainWindow::absoluteZoom(double factor)
+{
+    factor = factor * factor / 10000.0;
+    if (factor > 0) {
         factor = factor / zoomFactor();
         gv->scale(factor, factor);
     }
 }
 
-void MainWindow::absoluteZoom(int factor){
-    absoluteZoom(factor * factor / 10000.0);
+/*zoom with factor*/
+void MainWindow::absoluteZoom(int factor)
+{
+    absoluteZoom(factor);
 }
 
 int MainWindow::zoomFactorPercentage()
@@ -284,6 +324,77 @@ int MainWindow::zoomFactorPercentage()
     return 100 * sqrt(zoomFactor());
 }
 
-double MainWindow::zoomFactor() {
+double MainWindow::zoomFactor()
+{
     return gv->transform().m11();
+}
+
+void MainWindow::doAction(Action* a)
+{
+    saveActions = false;
+    if (a) {
+        if (a->type == ActionType::Zoom) {
+            ui->zoomSpinBox->setValue(a->zoomFactor);
+        } else if (a->type == ActionType::Rotate) {
+            ui->angleSpinBox->setValue(a->angle);
+        } else if (a->type == ActionType::Crop) {
+            image = a->image;
+            ui->angleSpinBox->setValue(a->angle);
+            ui->zoomSpinBox->setValue(a->zoomFactor);
+            scene->setImage(image);
+        }
+    }
+    saveActions = true;
+}
+
+void MainWindow::saveCropAction()
+{
+    if (!saveActions)
+        return;
+    Action* a = new Action();
+    a->type = ActionType::Crop;
+    a->zoomFactor = zoomFactorPercentage();
+    a->angle = image->angle();
+    a->image = image->copy();
+    undoStack.push(a);
+    saveActionHelper();
+}
+
+void MainWindow::saveRotateAction(int angle)
+{
+    if (!saveActions)
+        return;
+    Action* a = new Action();
+    a->type = ActionType::Rotate;
+    a->angle = angle;
+    a->zoomFactor = zoomFactorPercentage();
+    undoStack.push(a);
+    saveActionHelper();
+}
+
+void MainWindow::saveZoomAction(int factor)
+{
+    if (!saveActions)
+        return;
+    Action* a = new Action();
+    a->type = ActionType::Zoom;
+    a->zoomFactor = factor;
+    a->angle = ui->angleSpinBox->value();
+    undoStack.push(a);
+    saveActionHelper();
+}
+
+void MainWindow::saveActionHelper()
+{
+    redoStack.clear();
+    ui->actionRedo->setDisabled(redoStack.empty());
+    ui->actionUndo->setDisabled(undoStack.size() <= 1);
+    while (undoStack.size() > MAX_UNDO_STACK_SIZE) {
+        Action* a = undoStack.front();
+        if (a) {
+            if (a->image)
+                delete a->image;
+            delete a;
+        }
+    }
 }

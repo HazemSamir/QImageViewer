@@ -31,6 +31,7 @@ public:
 
 signals:
     void modeChanged(int);
+    void imageCropped();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);

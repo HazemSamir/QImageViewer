@@ -9,10 +9,10 @@ public:
 
     QString imagePath() { return path; }
 
-    int rotate(int angle);
-    int lazy_rotate(int angle);
-    int angle() { propagate_rotation(); return rotation; }
-    int lazy_angle() { return lazy_rotation; }
+    double rotate(double angle);
+    double lazy_rotate(double angle);
+    double angle() { propagate_rotation(); return rotation; }
+    double lazy_angle() { return lazy_rotation; }
 
     bool changed() { propagate_rotation(); return isRotated || isCropped; }
     bool loaded() { return isLoaded; }
@@ -21,11 +21,15 @@ public:
 
     QImage* currentQImage();
 
+    Image *copy();
+
 private:
+    Image() {};
+
     QString path;
     QImage image, rotatedImage;
-    int rotation = 0;
-    int lazy_rotation = 0;
+    double rotation = 0;
+    double lazy_rotation = 0;
     bool lazy_rotated = false;
     bool isRotated = false;
     bool isCropped = false;

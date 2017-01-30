@@ -17,30 +17,32 @@ QImage* Image::currentQImage()
     return &rotatedImage;
 }
 
-int Image::rotate(int angle)
+double Image::rotate(double angle)
 {
     if (!isLoaded)
         return 0;
     propagate_rotation();
-    int delta = angle - rotation;
-    rotation = angle;
 
-    QMatrix rm;
-    rm.rotate(angle);
-    rotatedImage = image.transformed(rm, Qt::SmoothTransformation);
-    if (rotation != 0)
-        isRotated = true;
+    double delta = angle - rotation;
+    if (angle != rotation) {
+        rotation = angle;
+        QMatrix rm;
+        rm.rotate(angle);
+        rotatedImage = image.transformed(rm, Qt::SmoothTransformation);
+        if (rotation != 0)
+            isRotated = true;
+    }
     return delta;
 }
 
 /* record the angle without applying rotation */
-int Image::lazy_rotate(int angle)
+double Image::lazy_rotate(double angle)
 {
     if (!isLoaded)
         return 0;
     if (!lazy_rotated)
         lazy_rotation = rotation;
-    int delta = angle - lazy_rotation;
+    double delta = angle - lazy_rotation;
     lazy_rotation = angle;
     lazy_rotated = true;
     return delta;
@@ -63,9 +65,26 @@ QImage Image::crop(QRectF rect)
     propagate_rotation();
     isCropped = true;
     /// TODO: Handle if the crop rectangle out side the image rect
-    rotatedImage = image = rotatedImage.copy(rect.x(), rect.y(), rect.width(), rect.height());
+    image = rotatedImage.copy(rect.x(), rect.y(), rect.width(), rect.height());
+    rotatedImage = image.copy();
     rotation = 0;
     lazy_rotation = 0;
     lazy_rotated = false;
     return image;
+}
+
+Image* Image::copy()
+{
+    Image* newImage = new Image();
+    newImage->image = this->image.copy();
+    newImage->rotatedImage = this->rotatedImage.copy();
+    newImage->isCropped = this->isCropped;
+    newImage->isLoaded = this->isLoaded;
+    newImage->isRotated = this->isRotated;
+    newImage->lazy_rotated = this->lazy_rotated;
+    newImage->lazy_rotation = this->lazy_rotation;
+    newImage->path = this->path;
+    newImage->rotation = this->rotation;
+
+    return newImage;
 }

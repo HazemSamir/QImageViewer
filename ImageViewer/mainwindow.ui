@@ -252,6 +252,8 @@
    <addaction name="actionRotate"/>
    <addaction name="actionCrop"/>
    <addaction name="separator"/>
+   <addaction name="actionUndo"/>
+   <addaction name="actionRedo"/>
    <addaction name="actionReset"/>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -286,6 +288,8 @@
     </property>
     <addaction name="actionRotate"/>
     <addaction name="actionCrop"/>
+    <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
     <addaction name="actionReset"/>
    </widget>
    <addaction name="menuFile"/>
@@ -378,11 +382,6 @@
    </property>
   </action>
   <action name="actionReset">
-   <property name="icon">
-    <iconset>
-     <normalon>:/icons/icons/reset.png</normalon>
-    </iconset>
-   </property>
    <property name="text">
     <string>Reset</string>
    </property>
@@ -457,6 +456,36 @@
    </property>
    <property name="toolTip">
     <string>zoom by certain value</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="icon">
+    <iconset resource="sources.qrc">
+     <normaloff>:/icons/icons/redo.png</normaloff>:/icons/icons/redo.png</iconset>
+   </property>
+   <property name="text">
+    <string>redo</string>
+   </property>
+   <property name="toolTip">
+    <string>redo (Shift + Ctrl + Z)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+Z</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="icon">
+    <iconset resource="sources.qrc">
+     <normaloff>:/icons/icons/undo.png</normaloff>:/icons/icons/undo.png</iconset>
+   </property>
+   <property name="text">
+    <string>undo</string>
+   </property>
+   <property name="toolTip">
+    <string>undo (Ctrl + Z)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
    </property>
   </action>
  </widget>

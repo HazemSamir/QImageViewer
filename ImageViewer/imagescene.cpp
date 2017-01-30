@@ -31,6 +31,7 @@ void ImageScene::setMode(Mode mode)
     } else if (mode == Mode::MovingMode) {
         mView->viewport()->setCursor(Qt::ClosedHandCursor);
         mView->setDragMode(QGraphicsView::ScrollHandDrag);
+        removeSelectionRectangle();
     }
     emit modeChanged(mode);
 }
@@ -92,9 +93,9 @@ void ImageScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
         if (rectArea >= 1) {
             image->crop(rect->rect());
             updatePixmap();
+            emit imageCropped();
         }
     }
-    removeSelectionRectangle();
     setMode(Mode::NoMode);
     QGraphicsScene::mouseReleaseEvent(event);
 }
@@ -113,6 +114,7 @@ void ImageScene::wheelEvent(QGraphicsSceneWheelEvent* event)
         } else if (event->delta() < 0) {
             mView->scale(zoomOutFactor, zoomOutFactor);
         }
+        setMode(sceneMode);
         event->accept();
     }
 }
